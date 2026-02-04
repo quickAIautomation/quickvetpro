@@ -1,0 +1,120 @@
+.conversation-list {
+  width: 350px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.conversation-list-header {
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.conversation-list-header h2 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-buttons button {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.filter-buttons button:hover {
+  background: #f5f5f5;
+}
+
+.filter-buttons button.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.conversation-items {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.conversation-item {
+  padding: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.conversation-item:hover {
+  background-color: #f8f9fa;
+}
+
+.conversation-item.selected {
+  background-color: #e3f2fd;
+  border-left: 3px solid #667eea;
+}
+
+.conversation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.conversation-phone {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.conversation-time {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.conversation-preview {
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.message-count {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.loading,
+.empty {
+  padding: 2rem;
+  text-align: center;
+  color: #999;
+}

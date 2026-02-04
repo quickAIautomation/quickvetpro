@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "quickvet-knowledge": {
+      "command": "python",
+      "args": ["C:/Users/Usuario/Desktop/QuickVET PRO/mcp/server.py"],
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "OPENAI_MODEL": "${OPENAI_MODEL}",
+        "DATABASE_URL": "${DATABASE_URL}"
+      }
+    }
+  }
+}

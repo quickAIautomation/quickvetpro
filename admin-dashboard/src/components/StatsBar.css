@@ -1,0 +1,45 @@
+.stats-bar {
+  display: flex;
+  background: white;
+  padding: 1rem 2rem;
+  gap: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.stat-item.active .stat-value {
+  color: #25d366;
+}
+
+.stat-item.pending .stat-value {
+  color: #ff9800;
+}
+
+.stat-item.resolved .stat-value {
+  color: #4caf50;
+}
+
+.stat-item.messages .stat-value {
+  color: #2196f3;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
