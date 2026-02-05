@@ -161,7 +161,7 @@ chown -R www-data:www-data /var/www/adminer
 print_info "Configurando Nginx para Adminer..."
 cat > /etc/nginx/sites-available/adminer <<'EOF'
 server {
-    listen 8080;
+    listen 8081;
     server_name _;
 
     root /var/www/adminer;
