@@ -220,6 +220,9 @@ server {
         alias /var/www/quickvet/admin-dashboard/dist;
         try_files $uri $uri/ /admin/index.html;
         index index.html;
+        
+        # Headers para SPA
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
     }
 
     # Página de Planos (compilado)
@@ -227,6 +230,9 @@ server {
         alias /var/www/quickvet/stripe/dist;
         try_files $uri $uri/ /plans/index.html;
         index index.html;
+        
+        # Headers para SPA
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
     }
 
     # API - Proxy para FastAPI
