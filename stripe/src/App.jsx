@@ -160,7 +160,7 @@ const SuccessDisplay = ({ sessionId }) => {
           <a href="http://localhost:3000/" className="dashboard-button">
             Acessar Dashboard
           </a>
-          <form action="http://localhost:8000/api/stripe/create-portal-session" method="POST">
+          <form action={`${API_BASE}/api/stripe/create-portal-session`} method="POST">
             <input type="hidden" name="session_id" value={sessionId} />
             <button type="submit" className="manage-button">
               Gerenciar assinatura
