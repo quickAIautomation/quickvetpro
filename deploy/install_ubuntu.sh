@@ -204,7 +204,8 @@ EOF
 print_info "Criando configuração Nginx para QuickVET..."
 cat > /etc/nginx/sites-available/quickvetpro <<'EOF'
 server {
-    listen 80;
+    listen 80 default_server;
+    listen [::]:80 default_server;
     server_name quickvetpro.com.br www.quickvetpro.com.br;
 
     access_log /var/log/nginx/quickvetpro_access.log;
