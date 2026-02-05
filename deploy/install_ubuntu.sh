@@ -3,7 +3,8 @@
 # Script de instalação completa - QuickVET PRO
 # Execute no servidor Ubuntu via Termius
 
-set -e
+# Não parar em erros - vamos tratar manualmente
+set +e
 
 echo "=========================================="
 echo "Instalacao QuickVET PRO - Ubuntu 24.04"
@@ -55,35 +56,63 @@ apt install -y \
     certbot \
     python3-certbot-nginx
 
+# Não parar em erros - vamos tratar manualmente
+set +e
+
+print_info "Adicionando PPA para Python 3.11..."
+# Adicionar PPA deadsnakes para Python 3.11 (DEVE SER PRIMEIRO)
+add-apt-repository -y ppa:deadsnakes/ppa
+if [ $? -ne 0 ]; then
+    print_error "Erro ao adicionar PPA deadsnakes"
+    exit 1
+fi
+
 print_info "Adicionando repositório do PostgreSQL..."
 # Adicionar repositório oficial do PostgreSQL
 sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+if [ $? -ne 0 ]; then
+    print_error "Erro ao criar arquivo de repositório PostgreSQL"
+    exit 1
+fi
+
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+if [ $? -ne 0 ]; then
+    print_error "Erro ao adicionar chave GPG do PostgreSQL"
+    exit 1
+fi
+
+print_info "Atualizando lista de pacotes após adicionar repositórios..."
 apt update
+if [ $? -ne 0 ]; then
+    print_error "Erro ao atualizar lista de pacotes"
+    exit 1
+fi
 
 print_info "Instalando PostgreSQL 17 com pgvector..."
-apt install -y \
-    postgresql-17 \
-    postgresql-contrib-17 \
-    postgresql-17-pgvector
-
-print_info "Adicionando PPA para Python 3.11..."
-# Adicionar PPA deadsnakes para Python 3.11
-add-apt-repository -y ppa:deadsnakes/ppa
-apt update
+apt install -y postgresql-17 postgresql-contrib-17 postgresql-17-pgvector
+if [ $? -ne 0 ]; then
+    print_error "Erro ao instalar PostgreSQL 17. Verifique se o repositório foi adicionado corretamente."
+    exit 1
+fi
 
 print_info "Instalando Python 3.11..."
-# Tentar instalar Python 3.11, se não disponível usar Python 3 padrão
-if apt-cache search python3.11 | grep -q python3.11; then
+# Verificar se Python 3.11 está disponível
+apt-cache search python3.11 | grep -q python3.11
+if [ $? -eq 0 ]; then
     apt install -y python3.11 python3.11-venv python3.11-dev
+    if [ $? -ne 0 ]; then
+        print_warn "Erro ao instalar Python 3.11, usando Python 3 padrão"
+        apt install -y python3 python3-venv python3-dev python3-pip
+    fi
 else
     print_warn "Python 3.11 não disponível, usando Python 3 padrão"
     apt install -y python3 python3-venv python3-dev python3-pip
-    # Criar symlink para python3.11 se necessário
-    if [ ! -f /usr/bin/python3.11 ]; then
-        PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2)
-        print_info "Usando Python ${PYTHON_VERSION}"
-    fi
+fi
+
+# Verificar se Python foi instalado
+if ! command -v python3 &> /dev/null; then
+    print_error "Python não foi instalado corretamente"
+    exit 1
 fi
 
 # Nginx já está instalado no servidor, pulando instalação
