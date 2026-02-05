@@ -31,6 +31,11 @@ echo "Ajustando permissoes..."
 sudo chown -R quickvet:quickvet /var/www/quickvet/admin-dashboard/dist
 sudo chown -R quickvet:quickvet /var/www/quickvet/stripe/dist
 
+echo "Limpando arquivos desnecessarios (opcional)..."
+# Remover node_modules (nao sao necessarios em producao)
+sudo rm -rf /var/www/quickvet/admin-dashboard/node_modules 2>/dev/null || true
+sudo rm -rf /var/www/quickvet/stripe/node_modules 2>/dev/null || true
+
 echo "Recarregando Nginx..."
 sudo systemctl reload nginx
 
