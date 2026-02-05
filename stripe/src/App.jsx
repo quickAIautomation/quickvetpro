@@ -244,11 +244,56 @@ export default function App() {
                 period = '/semestre';
               }
               
-              // Extrair features do metadata ou description
+              // Extrair features do metadata (não usar description)
               const metadata = product.metadata || {};
-              const features = metadata.features 
-                ? metadata.features.split(',').map(f => f.trim())
-                : (product.description ? product.description.split('\n').filter(f => f.trim()) : []);
+              let features = [];
+              
+              // Se tiver features no metadata, usar elas
+              if (metadata.features) {
+                features = metadata.features.split(',').map(f => f.trim()).filter(f => f.length > 0);
+              }
+              
+              // Se não tiver features no metadata, criar features padrão baseadas no nome do plano
+              if (features.length === 0) {
+                const planName = product.name.toLowerCase();
+                if (planName.includes('starter')) {
+                  features = [
+                    '50 mensagens/dia',
+                    'Suporte por email',
+                    '1 usuário',
+                    'Relatórios básicos'
+                  ];
+                } else if (planName.includes('business')) {
+                  features = [
+                    '200 mensagens/dia',
+                    'Suporte prioritário',
+                    '5 usuários',
+                    'Relatórios avançados',
+                    'Integrações'
+                  ];
+                } else if (planName.includes('pro')) {
+                  features = [
+                    '500 mensagens/dia',
+                    'Suporte 24/7',
+                    'Usuários ilimitados',
+                    'Relatórios completos',
+                    'API dedicada',
+                    'Prioridade máxima'
+                  ];
+                } else if (planName.includes('elite')) {
+                  features = [
+                    'Mensagens ilimitadas',
+                    'Suporte 24/7',
+                    'Usuários ilimitados',
+                    'Dashboard personalizado',
+                    'API dedicada',
+                    'SLA garantido',
+                    'Economia anual'
+                  ];
+                } else {
+                  features = ['Plano ativo no Stripe'];
+                }
+              }
               
               return {
                 id: product.id,
@@ -256,7 +301,7 @@ export default function App() {
                 price: `R$ ${amount.toFixed(2).replace('.', ',')}`,
                 period: period,
                 description: product.description || metadata.description || '',
-                features: features.length > 0 ? features : ['Plano ativo no Stripe'],
+                features: features,
                 lookupKey: price.lookup_key || price.id,
                 priceId: price.id,
                 popular: metadata.popular === 'true' || false,
@@ -268,8 +313,18 @@ export default function App() {
           console.log('Planos formatados:', formattedPlans.length);
           
           if (formattedPlans.length > 0) {
-            console.log('Usando planos do Stripe:', formattedPlans);
-            setPlans(formattedPlans);
+            // Ordenar planos do mais barato para o mais caro (pelo valor total do plano)
+            const sortedPlans = formattedPlans.sort((a, b) => {
+              // Extrair valor numérico do preço (remover "R$ " e substituir "," por ".")
+              const priceA = parseFloat(a.price.replace('R$ ', '').replace(',', '.'));
+              const priceB = parseFloat(b.price.replace('R$ ', '').replace(',', '.'));
+              
+              // Ordenar pelo valor total do plano (não mensal)
+              return priceA - priceB;
+            });
+            
+            console.log('Usando planos do Stripe (ordenados):', sortedPlans);
+            setPlans(sortedPlans);
           } else {
             console.warn('Nenhum plano válido encontrado (produtos sem preços recorrentes ativos). Usando planos padrão.');
             setPlans(DEFAULT_PLANS);
