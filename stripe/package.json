@@ -16,6 +16,7 @@
     "dev": "vite --config vite.config.js",
     "checkout": "set PORT=3001 && react-scripts start",
     "dashboard": "vite --config vite.dashboard.config.js",
+    "build": "vite build --config vite.config.js",
     "build:checkout": "react-scripts build",
     "build:dashboard": "vite build --config vite.dashboard.config.js"
   },
