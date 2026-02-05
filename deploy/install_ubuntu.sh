@@ -40,21 +40,46 @@ apt update && apt upgrade -y
 
 print_info "Instalando dependências básicas..."
 apt install -y \
-    python3.11 \
-    python3.11-venv \
-    python3-pip \
+    software-properties-common \
+    apt-transport-https \
+    ca-certificates \
+    gnupg \
+    lsb-release \
     git \
     curl \
     wget \
     build-essential \
     libpq-dev \
-    postgresql-17 \
-    postgresql-contrib-17 \
-    postgresql-17-pgvector \
     php-fpm \
     php-pgsql \
     certbot \
     python3-certbot-nginx
+
+print_info "Adicionando repositório do PostgreSQL..."
+# Adicionar repositório oficial do PostgreSQL
+sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+apt update
+
+print_info "Instalando PostgreSQL 17 com pgvector..."
+apt install -y \
+    postgresql-17 \
+    postgresql-contrib-17 \
+    postgresql-17-pgvector
+
+print_info "Instalando Python 3.11..."
+# Tentar instalar Python 3.11, se não disponível usar Python 3 padrão
+if apt-cache search python3.11 | grep -q python3.11; then
+    apt install -y python3.11 python3.11-venv python3.11-dev
+else
+    print_warn "Python 3.11 não disponível, usando Python 3 padrão"
+    apt install -y python3 python3-venv python3-dev python3-pip
+    # Criar symlink para python3.11 se necessário
+    if [ ! -f /usr/bin/python3.11 ]; then
+        PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2)
+        print_info "Usando Python ${PYTHON_VERSION}"
+    fi
+fi
 
 # Nginx já está instalado no servidor, pulando instalação
 print_warn "Nginx já está instalado, pulando instalação..."
@@ -196,7 +221,9 @@ echo "   cd /var/www/quickvet"
 echo "   sudo -u quickvet git clone https://github.com/quickAIautomation/quickvetpro.git ."
 echo ""
 echo "2. Criar ambiente virtual e instalar dependencias:"
-echo "   sudo -u quickvet python3.11 -m venv venv"
+echo "   cd /var/www/quickvet"
+PYTHON_CMD=$(which python3.11 2>/dev/null || which python3)
+echo "   sudo -u quickvet $PYTHON_CMD -m venv venv"
 echo "   sudo -u quickvet venv/bin/pip install --upgrade pip"
 echo "   sudo -u quickvet venv/bin/pip install -r requirements.txt"
 echo "   sudo -u quickvet venv/bin/pip install gunicorn"
