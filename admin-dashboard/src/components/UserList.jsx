@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import './UserList.css'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+// Detectar ambiente: usar localhost em desenvolvimento, produção em produção
+const API_BASE = import.meta.env.VITE_API_BASE || 
+  (import.meta.env.DEV ? 'http://localhost:8000' : 'https://quickvetpro.com.br')
 
 function UserList({ token }) {
   const [users, setUsers] = useState([])
@@ -79,13 +81,13 @@ function UserList({ token }) {
 
   const getPlanColor = (planType) => {
     const colors = {
-      'free': '#999',
-      'monthly': '#2196f3',
-      'quarterly': '#4caf50',
-      'semiannual': '#ff9800',
-      'annual': '#9c27b0',
-      'enterprise': '#f44336',
-      'sem_plano': '#ccc'
+      'free': '#64748b',
+      'monthly': '#6366f1',
+      'quarterly': '#10b981',
+      'semiannual': '#f59e0b',
+      'annual': '#10b981',
+      'enterprise': '#8b5cf6',
+      'sem_plano': '#64748b'
     }
     return colors[planType] || '#999'
   }

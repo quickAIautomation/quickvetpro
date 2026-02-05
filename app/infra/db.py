@@ -244,7 +244,7 @@ async def create_tables():
             """)
             logger.warning("Tabela knowledge_chunks criada sem suporte a vector (pgvector não disponível)")
         
-        # Índices para performance
+        # Índices para performance (apenas para tabelas já criadas)
         await conn.execute("""
             CREATE INDEX IF NOT EXISTS idx_plans_user_id ON plans(user_id);
             CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id);
@@ -258,14 +258,6 @@ async def create_tables():
             CREATE INDEX IF NOT EXISTS idx_audit_logs_account_id ON audit_logs(account_id);
             CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
             CREATE INDEX IF NOT EXISTS idx_audit_logs_idempotency ON audit_logs(idempotency_key);
-            CREATE INDEX IF NOT EXISTS idx_conversations_user_id ON conversations(user_id);
-            CREATE INDEX IF NOT EXISTS idx_conversations_phone ON conversations(phone_number);
-            CREATE INDEX IF NOT EXISTS idx_conversations_status ON conversations(status);
-            CREATE INDEX IF NOT EXISTS idx_conversations_last_message ON conversations(last_message_at DESC);
-            CREATE INDEX IF NOT EXISTS idx_conversation_messages_conv ON conversation_messages(conversation_id);
-            CREATE INDEX IF NOT EXISTS idx_conversation_messages_user ON conversation_messages(user_id);
-            CREATE INDEX IF NOT EXISTS idx_conversation_messages_created ON conversation_messages(created_at DESC);
-            CREATE INDEX IF NOT EXISTS idx_admins_email ON admins(email);
         """)
         
         # Índice vetorial HNSW otimizado para busca por similaridade (opcional)
@@ -307,11 +299,12 @@ async def create_tables():
         """)
         
         # Tabela de nós hierárquicos (árvore)
+        # Criar primeiro sem a foreign key auto-referencial
         await conn.execute("""
             CREATE TABLE IF NOT EXISTS structural_nodes (
                 node_id SERIAL PRIMARY KEY,
                 document_id INTEGER REFERENCES structural_documents(document_id) ON DELETE CASCADE,
-                parent_id INTEGER REFERENCES structural_nodes(node_id) ON DELETE CASCADE,
+                parent_id INTEGER,
                 node_type VARCHAR(50) NOT NULL,
                 title TEXT NOT NULL,
                 content TEXT,
@@ -319,10 +312,25 @@ async def create_tables():
                 page_end INTEGER,
                 level INTEGER DEFAULT 0,
                 order_index INTEGER DEFAULT 0,
-                references TEXT[],
+                node_references TEXT[],
                 metadata JSONB DEFAULT '{}',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
+        """)
+        
+        # Adicionar foreign key auto-referencial depois
+        await conn.execute("""
+            DO $$ 
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 FROM pg_constraint 
+                    WHERE conname = 'structural_nodes_parent_fkey'
+                ) THEN
+                    ALTER TABLE structural_nodes 
+                    ADD CONSTRAINT structural_nodes_parent_fkey 
+                    FOREIGN KEY (parent_id) REFERENCES structural_nodes(node_id) ON DELETE CASCADE;
+                END IF;
+            END $$;
         """)
         
         # Tabela de sumário (TOC) - cache para navegação rápida
@@ -443,7 +451,7 @@ async def create_tables():
             )
         """)
         
-        # Índices para dashboard admin
+        # Índices para dashboard admin (criados após as tabelas)
         await conn.execute("""
             CREATE INDEX IF NOT EXISTS idx_conversations_user_id ON conversations(user_id);
             CREATE INDEX IF NOT EXISTS idx_conversations_phone ON conversations(phone_number);

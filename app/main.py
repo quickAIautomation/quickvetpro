@@ -105,18 +105,12 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Middleware de Observabilidade (deve ser primeiro)
-app.add_middleware(ObservabilityMiddleware)
-
-# Middleware de Rate Limiting
-if os.getenv("RATE_LIMIT_ENABLED", "true").lower() == "true":
-    app.add_middleware(RateLimitMiddleware)
-
-# CORS middleware
+# CORS middleware (DEVE SER PRIMEIRO para funcionar corretamente)
 allowed_origins = [
     settings.frontend_domain,
     "https://quickvetpro.com.br",
     "http://localhost:3000",  # Para desenvolvimento local
+    "http://localhost:3001",  # Admin dashboard
     "http://localhost:5173",  # Vite dev server
 ]
 app.add_middleware(
@@ -126,6 +120,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Middleware de Observabilidade
+app.add_middleware(ObservabilityMiddleware)
+
+# Middleware de Rate Limiting
+if os.getenv("RATE_LIMIT_ENABLED", "true").lower() == "true":
+    app.add_middleware(RateLimitMiddleware)
 
 # Rotas
 app.include_router(webhook_router, prefix="/api/webhook", tags=["webhook"])

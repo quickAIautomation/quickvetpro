@@ -2,66 +2,74 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f0f2f5;
+  background: #0a0a0f;
 }
 
 .dashboard-header {
-  background: white;
-  padding: 1rem 2rem;
+  background: #12121a;
+  border-bottom: 1px solid #1e1e2e;
+  padding: 20px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 10;
 }
 
 .dashboard-header h1 {
-  color: #333;
-  font-size: 1.5rem;
+  color: #f8fafc;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 .logout-button {
-  padding: 0.5rem 1rem;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 6px;
+  padding: 10px 20px;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.2s;
+  font-size: 14px;
+  transition: all 0.2s;
+  font-family: inherit;
 }
 
 .logout-button:hover {
-  background-color: #c82333;
+  background-color: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #f87171;
 }
 
 .dashboard-tabs {
   display: flex;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  padding: 0 2rem;
-  gap: 1rem;
+  background: #12121a;
+  border-bottom: 1px solid #1e1e2e;
+  padding: 0 32px;
+  gap: 8px;
 }
 
 .dashboard-tabs button {
-  padding: 1rem 1.5rem;
+  padding: 16px 24px;
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
   cursor: pointer;
-  font-size: 1rem;
-  color: #666;
+  font-size: 15px;
+  color: #64748b;
   transition: all 0.2s;
+  font-family: inherit;
+  font-weight: 500;
 }
 
 .dashboard-tabs button:hover {
-  color: #333;
-  background: #f5f5f5;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .dashboard-tabs button.active {
-  color: #667eea;
-  border-bottom-color: #667eea;
+  color: #14b8a6;
+  border-bottom-color: #14b8a6;
   font-weight: 600;
 }
 
@@ -69,4 +77,5 @@
   flex: 1;
   display: flex;
   overflow: hidden;
+  background: #0a0a0f;
 }

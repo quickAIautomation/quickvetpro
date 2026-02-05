@@ -2,7 +2,9 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import './Login.css'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+// Detectar ambiente: usar localhost em desenvolvimento, produção em produção
+const API_BASE = import.meta.env.VITE_API_BASE || 
+  (import.meta.env.DEV ? 'http://localhost:8000' : 'https://quickvetpro.com.br')
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('')

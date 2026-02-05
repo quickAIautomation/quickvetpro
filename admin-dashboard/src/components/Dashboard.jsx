@@ -6,7 +6,9 @@ import UserList from './UserList'
 import StatsBar from './StatsBar'
 import './Dashboard.css'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+// Detectar ambiente: usar localhost em desenvolvimento, produção em produção
+const API_BASE = import.meta.env.VITE_API_BASE || 
+  (import.meta.env.DEV ? 'http://localhost:8000' : 'https://quickvetpro.com.br')
 
 function Dashboard({ token, onLogout }) {
   const [stats, setStats] = useState(null)

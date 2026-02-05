@@ -55,11 +55,13 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
             response.headers["X-Correlation-ID"] = correlation_id
             response.headers["X-Response-Time"] = f"{duration_ms:.2f}ms"
             
+            # Obter status code da resposta
+            status_code = response.status_code
+            
             # Registrar métricas
             metrics.record_request(path, duration_ms, status_code)
             
             # Logar conclusão
-            status_code = response.status_code
             log_level = "info" if status_code < 400 else "warning" if status_code < 500 else "error"
             
             getattr(logger, log_level)(

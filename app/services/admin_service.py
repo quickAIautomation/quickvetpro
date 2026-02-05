@@ -17,13 +17,20 @@ from app.infra.db import get_db_connection
 logger = logging.getLogger(__name__)
 
 # Configurações
-ADMIN_EMAIL = "quickai.automation@gmail.com"
-ADMIN_PASSWORD = "#QuickAI2504"
+ADMIN_EMAIL = "quickai.automation@gmail.com"  # Sempre lowercase
+ADMIN_PASSWORD = "#QuickAI2504."
 JWT_SECRET = os.getenv("JWT_SECRET", "admin_secret_key_change_in_production")
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 8
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Configurar bcrypt com fallback para pbkdf2 se houver problemas
+try:
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    # Testar se bcrypt funciona
+    test_hash = pwd_context.hash("test")
+except Exception as e:
+    logger.warning(f"Bcrypt não disponível, usando pbkdf2: {e}")
+    pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 
 class AdminService:
@@ -44,8 +51,9 @@ class AdminService:
                 logger.info("Admin já existe")
                 return
             
-            # Criar hash da senha
-            password_hash = pwd_context.hash(ADMIN_PASSWORD)
+            # Criar hash da senha (garantir que a senha não exceda 72 bytes para bcrypt)
+            password_to_hash = ADMIN_PASSWORD.encode('utf-8')[:72].decode('utf-8')
+            password_hash = pwd_context.hash(password_to_hash)
             
             # Inserir admin
             await db.execute("""

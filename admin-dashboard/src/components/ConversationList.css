@@ -1,47 +1,53 @@
 .conversation-list {
-  width: 350px;
-  background: white;
+  width: 380px;
+  background: #12121a;
+  border-right: 1px solid #1e1e2e;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #e0e0e0;
   overflow: hidden;
 }
 
 .conversation-list-header {
-  padding: 1rem;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 24px;
+  border-bottom: 1px solid #1e1e2e;
 }
 
 .conversation-list-header h2 {
-  font-size: 1.2rem;
-  color: #333;
-  margin-bottom: 1rem;
+  font-size: 18px;
+  color: #f8fafc;
+  margin-bottom: 16px;
+  font-weight: 600;
 }
 
 .filter-buttons {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .filter-buttons button {
-  padding: 0.4rem 0.8rem;
-  border: 1px solid #ddd;
-  background: white;
-  border-radius: 6px;
+  padding: 8px 16px;
+  border: 1px solid #2a2a3e;
+  background: #0a0a0f;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 13px;
+  color: #94a3b8;
   transition: all 0.2s;
+  font-family: inherit;
+  font-weight: 500;
 }
 
 .filter-buttons button:hover {
-  background: #f5f5f5;
+  background: #1a1a28;
+  border-color: #3a3a4e;
+  color: #e2e8f0;
 }
 
 .filter-buttons button.active {
-  background: #667eea;
+  background: #14b8a6;
   color: white;
-  border-color: #667eea;
+  border-color: #14b8a6;
 }
 
 .conversation-items {
@@ -50,43 +56,43 @@
 }
 
 .conversation-item {
-  padding: 1rem;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 16px;
+  border-bottom: 1px solid #1e1e2e;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .conversation-item:hover {
-  background-color: #f8f9fa;
+  background-color: #1a1a28;
 }
 
 .conversation-item.selected {
-  background-color: #e3f2fd;
-  border-left: 3px solid #667eea;
+  background-color: rgba(20, 184, 166, 0.1);
+  border-left: 3px solid #14b8a6;
 }
 
 .conversation-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
 }
 
 .conversation-phone {
   font-weight: 600;
-  color: #333;
-  font-size: 0.95rem;
+  color: #f8fafc;
+  font-size: 15px;
 }
 
 .conversation-time {
-  font-size: 0.75rem;
-  color: #999;
+  font-size: 12px;
+  color: #64748b;
 }
 
 .conversation-preview {
-  color: #666;
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
+  color: #94a3b8;
+  font-size: 13px;
+  margin-bottom: 8px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -99,22 +105,36 @@
 }
 
 .status-badge {
-  padding: 0.2rem 0.6rem;
+  padding: 4px 12px;
   border-radius: 12px;
   color: white;
-  font-size: 0.7rem;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-badge.active {
+  background: #10b981;
+}
+
+.status-badge.pending {
+  background: #f59e0b;
+}
+
+.status-badge.resolved {
+  background: #64748b;
 }
 
 .message-count {
-  font-size: 0.75rem;
-  color: #999;
+  font-size: 12px;
+  color: #64748b;
 }
 
 .loading,
 .empty {
-  padding: 2rem;
+  padding: 48px;
   text-align: center;
-  color: #999;
+  color: #64748b;
+  font-size: 14px;
 }
