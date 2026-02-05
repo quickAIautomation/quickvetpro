@@ -43,7 +43,6 @@ apt install -y \
     python3.11 \
     python3.11-venv \
     python3-pip \
-    nginx \
     git \
     curl \
     wget \
@@ -57,6 +56,9 @@ apt install -y \
     php-pgsql \
     certbot \
     python3-certbot-nginx
+
+# Nginx já está instalado no servidor, pulando instalação
+print_warn "Nginx já está instalado, pulando instalação..."
 
 print_info "Criando usuário quickvet..."
 if ! id "quickvet" &>/dev/null; then
