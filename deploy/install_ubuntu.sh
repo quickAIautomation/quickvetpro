@@ -51,7 +51,6 @@ apt install -y \
     postgresql-17 \
     postgresql-contrib-17 \
     postgresql-17-pgvector \
-    redis-server \
     php-fpm \
     php-pgsql \
     certbot \
@@ -59,6 +58,9 @@ apt install -y \
 
 # Nginx já está instalado no servidor, pulando instalação
 print_warn "Nginx já está instalado, pulando instalação..."
+
+# Redis será usado do Easypanel, pulando instalação
+print_warn "Redis será usado do Easypanel, pulando instalação..."
 
 print_info "Criando usuário quickvet..."
 if ! id "quickvet" &>/dev/null; then
@@ -92,13 +94,6 @@ CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 EOF
 
-print_info "Configurando Redis..."
-# Configurar senha do Redis
-REDIS_PASSWORD="QuickVET2024!Redis"
-sed -i "s/# requirepass foobared/requirepass $REDIS_PASSWORD/" /etc/redis/redis.conf
-systemctl restart redis-server
-systemctl enable redis-server
-
 print_info "Baixando Adminer..."
 cd /var/www/adminer
 wget -q https://www.adminer.org/latest.php -O index.php
@@ -131,7 +126,7 @@ print_info "Criando systemd service para QuickVET..."
 cat > /etc/systemd/system/quickvet.service <<'EOF'
 [Unit]
 Description=QuickVET PRO API
-After=network.target postgresql.service redis.service
+After=network.target postgresql.service
 
 [Service]
 User=quickvet
@@ -211,8 +206,8 @@ echo "   sudo -u quickvet nano /var/www/quickvet/.env"
 echo ""
 echo "   Adicione as seguintes variaveis:"
 echo "   DATABASE_URL=postgresql://quickvet:QuickVET2024!Secure@localhost:5432/quickvetpro"
-echo "   REDIS_URL=redis://:QuickVET2024!Redis@localhost:6379/0"
-echo "   (e todas as outras credenciais)"
+echo "   REDIS_URL=redis://default:#QuickAI2504.@easypanel.quickautomation.space:6386/0"
+echo "   (e todas as outras credenciais do Easypanel)"
 echo ""
 echo "4. Iniciar servico:"
 echo "   sudo systemctl daemon-reload"
@@ -231,13 +226,13 @@ echo "   Senha: QuickVET2024!Secure"
 echo "   Banco: quickvetpro"
 echo ""
 echo "CREDENCIAIS CRIADAS:"
-echo "PostgreSQL:"
+echo "PostgreSQL (local):"
 echo "  Usuario: quickvet"
 echo "  Senha: QuickVET2024!Secure"
 echo "  Banco: quickvetpro"
 echo ""
-echo "Redis:"
-echo "  Senha: QuickVET2024!Redis"
+echo "Redis (Easypanel):"
+echo "  Use as credenciais do Easypanel no arquivo .env"
 echo ""
-echo "IMPORTANTE: Altere essas senhas em producao!"
+echo "IMPORTANTE: Altere a senha do PostgreSQL em producao!"
 echo "=========================================="
