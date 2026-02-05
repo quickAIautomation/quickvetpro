@@ -54,7 +54,9 @@ apt install -y \
     php-fpm \
     php-pgsql \
     certbot \
-    python3-certbot-nginx
+    python3-certbot-nginx \
+    nodejs \
+    npm
 
 # Não parar em erros - vamos tratar manualmente
 set +e
@@ -213,6 +215,43 @@ server {
 
     client_max_body_size 10M;
 
+    # Admin Dashboard (compilado)
+    location /admin {
+        alias /var/www/quickvet/admin-dashboard/dist;
+        try_files $uri $uri/ /admin/index.html;
+        index index.html;
+    }
+
+    # Página de Planos (compilado)
+    location /plans {
+        alias /var/www/quickvet/stripe/dist;
+        try_files $uri $uri/ /plans/index.html;
+        index index.html;
+    }
+
+    # API - Proxy para FastAPI
+    location /api {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+
+    # OAuth e outras rotas do backend
+    location ~ ^/(oauth|health|webhook) {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Root - Proxy para FastAPI (fallback)
     location / {
         proxy_pass http://127.0.0.1:8000;
         proxy_set_header Host $host;
@@ -255,7 +294,17 @@ echo "1. Clonar o repositorio Git:"
 echo "   cd /var/www/quickvet"
 echo "   sudo -u quickvet git clone https://github.com/quickAIautomation/quickvetpro.git ."
 echo ""
-echo "2. Criar ambiente virtual e instalar dependencias:"
+echo "2. Compilar frontends (ADMIN DASHBOARD e PLANOS):"
+echo "   cd /var/www/quickvet/admin-dashboard"
+echo "   sudo -u quickvet npm install"
+echo "   sudo -u quickvet npm run build"
+echo ""
+echo "   cd /var/www/quickvet/stripe"
+echo "   sudo -u quickvet npm install"
+echo "   sudo -u quickvet npm run build"
+echo "   # OU se usar react-scripts: npm run build:checkout"
+echo ""
+echo "3. Criar ambiente virtual e instalar dependencias Python:"
 echo "   cd /var/www/quickvet"
 PYTHON_CMD=$(which python3.11 2>/dev/null || which python3)
 echo "   sudo -u quickvet $PYTHON_CMD -m venv venv"
