@@ -33,7 +33,7 @@ function UserList({ token }) {
   const loadUsers = async () => {
     try {
       const planType = filter === 'all' ? null : filter
-      const res = await axiosInstance.get('/admin/users', {
+      const res = await axiosInstance.get('/api/admin/users', {
         params: { limit: 200, plan_type: planType }
       })
       setUsers(res.data)
@@ -46,7 +46,7 @@ function UserList({ token }) {
 
   const loadUserStats = async () => {
     try {
-      const res = await axiosInstance.get('/admin/users/stats')
+      const res = await axiosInstance.get('/api/admin/users/stats')
       setUserStats(res.data)
     } catch (err) {
       console.error('Erro ao carregar estatísticas:', err)

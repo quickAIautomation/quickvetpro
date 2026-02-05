@@ -34,12 +34,12 @@ function Dashboard({ token, onLogout }) {
   const loadData = async () => {
     try {
       // Carregar estatísticas
-      const statsRes = await axiosInstance.get('/admin/stats')
+      const statsRes = await axiosInstance.get('/api/admin/stats')
       setStats(statsRes.data)
 
       // Carregar conversas
       const status = filter === 'all' ? null : filter
-      const convRes = await axiosInstance.get('/admin/conversations', {
+      const convRes = await axiosInstance.get('/api/admin/conversations', {
         params: { status, limit: 100 }
       })
       setConversations(convRes.data)
@@ -66,7 +66,7 @@ function Dashboard({ token, onLogout }) {
     
     // Carregar mensagens da conversa
     try {
-      const res = await axiosInstance.get(`/admin/conversations/${conversation.conversation_id}/messages`)
+      const res = await axiosInstance.get(`/api/admin/conversations/${conversation.conversation_id}/messages`)
       setSelectedConversation({
         ...conversation,
         messages: res.data
@@ -78,7 +78,7 @@ function Dashboard({ token, onLogout }) {
 
   const handleUpdateStatus = async (conversationId, newStatus) => {
     try {
-      await axiosInstance.patch(`/admin/conversations/${conversationId}/status`, {
+      await axiosInstance.patch(`/api/admin/conversations/${conversationId}/status`, {
         status: newStatus
       })
       await loadData()

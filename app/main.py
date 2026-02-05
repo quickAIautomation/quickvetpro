@@ -134,7 +134,7 @@ app.include_router(stripe_router, prefix="/api/stripe", tags=["stripe"])
 app.include_router(platform_router, prefix="/api", tags=["platform"])
 app.include_router(knowledge_router, prefix="/api/knowledge", tags=["knowledge"])
 app.include_router(structural_router, prefix="/api/structural", tags=["structural-knowledge"])
-app.include_router(admin_router, tags=["admin"])
+app.include_router(admin_router, prefix="/api", tags=["admin"])
 app.include_router(oauth_router, tags=["oauth"])
 app.include_router(connect_router, prefix="/api", tags=["stripe-connect"])
 
