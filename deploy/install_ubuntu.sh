@@ -58,7 +58,7 @@ apt install -y \
 print_info "Adicionando repositório do PostgreSQL..."
 # Adicionar repositório oficial do PostgreSQL
 sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
 apt update
 
 print_info "Instalando PostgreSQL 17 com pgvector..."
@@ -66,6 +66,11 @@ apt install -y \
     postgresql-17 \
     postgresql-contrib-17 \
     postgresql-17-pgvector
+
+print_info "Adicionando PPA para Python 3.11..."
+# Adicionar PPA deadsnakes para Python 3.11
+add-apt-repository -y ppa:deadsnakes/ppa
+apt update
 
 print_info "Instalando Python 3.11..."
 # Tentar instalar Python 3.11, se não disponível usar Python 3 padrão
