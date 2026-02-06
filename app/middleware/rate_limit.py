@@ -539,6 +539,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             "/redoc",
             "/favicon.ico",
         ]
+        # Pular rate limit para endpoints de admin e ingestão de conhecimento
+        if path.startswith("/api/admin") or path.startswith("/api/knowledge/ingest") or path.startswith("/api/structural/ingest"):
+            return True
         return path in skip_paths or path.startswith("/static")
 
 
