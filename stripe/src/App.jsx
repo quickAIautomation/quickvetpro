@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_BASE || 
+  (import.meta.env.DEV ? 'http://localhost:8000' : 'https://quickvetpro.com.br');
 
 // Planos padrão (fallback se não conseguir buscar do Stripe)
 const DEFAULT_PLANS = [
