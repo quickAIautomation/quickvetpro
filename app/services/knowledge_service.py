@@ -34,8 +34,8 @@ EMBEDDING_MODEL = "text-embedding-3-small"
 EMBEDDING_DIMENSIONS = 1536
 
 # Configurações de batch
-BATCH_SIZE = 10  # Número de embeddings por chamada à API
-MAX_CONCURRENT_BATCHES = 3  # Batches paralelos
+BATCH_SIZE = 5  # Número de embeddings por chamada à API (reduzido para evitar crash de memória)
+MAX_CONCURRENT_BATCHES = 2  # Batches paralelos (reduzido)
 
 
 class KnowledgeService:
@@ -111,9 +111,15 @@ class KnowledgeService:
                     saved += 1
                 
                 logger.info(f"Processados {saved}/{len(chunks)} chunks")
+                
+                # Delay entre batches para evitar rate limiting e reduzir uso de memória
+                if i + BATCH_SIZE < len(chunks):
+                    await asyncio.sleep(1)  # 1 segundo entre batches
                     
             except Exception as e:
-                logger.error(f"Erro no batch {i}-{i+BATCH_SIZE}: {e}")
+                logger.error(f"Erro no batch {i}-{i+BATCH_SIZE}: {e}", exc_info=True)
+                # Continuar com próximo batch mesmo em caso de erro
+                await asyncio.sleep(2)  # Delay maior em caso de erro
                 continue
         
         logger.info(f"Concluído: {saved} chunks salvos de {filename}")
