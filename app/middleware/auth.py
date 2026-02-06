@@ -277,10 +277,15 @@ async def get_current_user(
     if bearer:
         token_payload = decode_jwt_token(bearer.credentials)
         if token_payload:
+            # Se for admin mas não tiver permissions, adicionar
+            permissions = token_payload.permissions
+            if token_payload.type == "admin" and not permissions:
+                permissions = ["admin"]
+            
             return AuthenticatedUser(
                 id=token_payload.sub,
                 type=token_payload.type,
-                permissions=token_payload.permissions
+                permissions=permissions
             )
     
     return None

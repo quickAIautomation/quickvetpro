@@ -120,6 +120,7 @@ class AdminService:
             "sub": str(admin_id),
             "email": email,
             "type": "admin",
+            "permissions": ["admin"],  # Adicionar permissão admin
             "exp": expiration,
             "iat": datetime.utcnow()
         }
