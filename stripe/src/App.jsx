@@ -303,7 +303,7 @@ export default function App() {
                 period: period,
                 description: product.description || metadata.description || '',
                 features: features,
-                lookupKey: price.lookup_key || price.id,
+                lookupKey: price.lookup_key || null,
                 priceId: price.id,
                 popular: metadata.popular === 'true' || false,
                 color: metadata.color || '#6366f1'
